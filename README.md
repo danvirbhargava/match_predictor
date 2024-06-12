@@ -1,2 +1,4 @@
-# match_predictor
-Machine Learning algorithm to predict outcomes of Euros matches
+Match Predictor for the 2024 Euros
+
+Uses web scraping to gather data for training the models
+
