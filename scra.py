@@ -15,7 +15,9 @@ def extract_stats(url):
             EC.presence_of_element_located((By.CLASS_NAME, 'stats-module__single-stat'))
         )
         soup = BeautifulSoup(driver.page_source, 'html.parser')
-        stats = {"url": url}
+        team_name_tag = soup.find('span', class_='team-name pk-d--none pk-d-sm--block')
+        team_name = team_name_tag.text.strip() if team_name_tag else 'Unknown'
+        stats = {"team": team_name}
         stat_items = soup.find_all('pk-num-stat-item')
         for item in stat_items:
             stat_value = item.find('div', slot='stat-value').text.strip() if item.find('div', slot='stat-value') else None
@@ -64,12 +66,13 @@ driver.quit()
 
 flattened_stats = []
 for stat in all_stats:
-    flattened_stat = {"url": stat["url"]}
+    flattened_stat = {"team": stat["team"]}
     for key, value in stat.items():
-        if key != "url":
-            flattened_stat[f"{key} value"] = value["value"]
+        if key != "team":
+            flattened_stat[f"{key}"] = value["value"]
     flattened_stats.append(flattened_stat)
 
 team_stats_df = pd.DataFrame(flattened_stats)
 
 print(team_stats_df)
+team_stats_df.to_csv('team_stats.csv', index=False)
